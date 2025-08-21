@@ -10,13 +10,7 @@ from typing import Optional, Dict, Any
 from otf_api import Otf, OtfUser
 
 
-def get_otf_info() -> Dict[str, Any]:
-    """
-    Retrieve OTF membership and booking information.
-    
-    Returns:
-        Dict containing membership and booking data
-    """
+def get_otf() -> Otf:
     # Get credentials from environment variables
     email = os.getenv('OTF_EMAIL')
     password = os.getenv('OTF_PASSWORD')
@@ -25,13 +19,20 @@ def get_otf_info() -> Dict[str, Any]:
         raise ValueError("OTF_EMAIL and OTF_PASSWORD environment variables must be set")
     
     # Initialize OTF client
-    otf = Otf(user=OtfUser(email, password))
+    return Otf(user=OtfUser(email, password))    
+
+def get_otf_info() -> Dict[str, Any]:
+    """
+    Retrieve OTF membership and booking information.
     
-    # Get membership information
+    Returns:
+        Dict containing membership and booking data
+    """    
+    otf = get_otf()
     membership = otf.members.get_member_membership()
-    
-    # Get booking information
     bookings = otf.bookings.get_bookings()
+    classes = otf.bookings.get_classes()
+    num_classes_available = len(classes)
     
     # Find the next booking (soonest upcoming booking)
     next_booking_date = None
@@ -73,7 +74,8 @@ def get_otf_info() -> Dict[str, Any]:
         "class_count": membership.count,
         "classes_remaining": membership.remaining,
         "next_booking_date": next_booking_date,
-        "cycle_percentage": cycle_percentage
+        "cycle_percentage": cycle_percentage,
+        "num_classes_available": num_classes_available
     }
     
     return result

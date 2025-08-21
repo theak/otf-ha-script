@@ -65,6 +65,14 @@ def send_to_homeassistant(data: Dict[str, Any], ha_url: str, ha_token: str) -> N
                 'unit_of_measurement': '%',
                 'icon': 'mdi:percent'
             }
+        },
+        'otf_classes_available': {
+            'state': data['num_classes_available'],
+            'attributes': {
+                'friendly_name': 'OTF Classes Available',
+                'unit_of_measurement': 'classes',
+                'icon': 'mdi:calendar-multiple'
+            }
         }
     }
     
